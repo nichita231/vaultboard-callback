@@ -43,8 +43,15 @@
   if (!code || !/^[0-9a-f]{16,64}$/i.test(nonce) || !priv)
     return fail('Nothing to forward', 'Open this page by scanning the QR code on your board.');
   location.replace('http://' + ip + '/cb?code=' + encodeURIComponent(code) + '&state=' + encodeURIComponent(state));
+  // If the browser refuses to open a local address, show the code so it can
+  // be typed on the board ("Type code" on the sign-in screen).
   setTimeout(function () {
-    fail('Could not reach the board', 'Make sure your phone is on the same Wi-Fi as the board (' + ip + '), then scan the QR code again.');
+    fail('Could not reach the board', 'Make sure your phone is on the same Wi-Fi as the board (' + ip + '). ' +
+      'Or tap "Type code" on the board and enter this one-time code:');
+    var c = document.createElement('p');
+    c.innerHTML = '<code style="font-size:18px;word-break:break-all"></code>';
+    c.firstChild.textContent = code;
+    msg.after(c);
   }, 6000);
 })();
 </script>
